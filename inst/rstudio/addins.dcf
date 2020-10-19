@@ -1,0 +1,4 @@
+Name: Insert QSol
+Description: Inserts `qbegin/end and solbegin/send` at the cursor position.
+Binding: insertqsol
+Interactive: false
