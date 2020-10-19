@@ -1,0 +1,262 @@
+---
+title: "Survey Results"
+author: uoepsy.github.io
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+require(tidyverse)
+require(googlesheets4)
+dapr1 <- read_sheet("1rRpl3XQW4spjSxplW2oJdyhJMXFpUqYEgNZQR4KJ-hE")[-c(1:2),]
+rms2 <- read_sheet("1I5pcVlhDhcBMMWjRkiHrbw30VGDE61qQXcQsOETRap0")[-c(1:2),]
+dapr2 <- read_sheet("1wCT--b8gElPtSU09F25MQbZjIFNTVCxHjtBo46opRa4")[-1,]
+
+dapr1$course <- "dapr1"
+dapr2$course <- "dapr2"
+rms2$course <- "rms2"
+
+bind_rows(dapr1, dapr2) %>%
+    bind_rows(., rms2) -> ugcourses
+
+usmr <- read_sheet("1JacU9_yb9lt9FaHeiblZTw4vvFwLVOaCOiUIVdzmoPQ")
+names(usmr) <- c("uun","namepref","birthmonth","height","eyecolour","binary","stats","prog","softwarer","softwarespss","softwarestata","softwareexcel","softwarepython","softwaresas","softwareother","softwarenone","threewords","learn","concerns","confuse","dat","lat","lon")
+usmr %>% select(uun, birthmonth, height, eyecolour, binary, threewords, lat, lon) %>% 
+    mutate(course = "usmr") %>%
+    bind_rows(
+        ugcourses %>% select(uun, birthmonth, height, eyecolour, 
+                             binary, threewords, lat, lon, course),
+        .
+    ) -> allcourses
+
+allcourses$missing <- ifelse(rowSums(is.na(allcourses))==6,1,0)
+allcourses <- allcourses %>% filter(missing!=1)
+
+
+allcourses$height <- gsub("cm| ","",allcourses$height)
+allcourses$height <- ifelse(substr(allcourses$height,2,2)==".", gsub("\\.","",allcourses$height),allcourses$height)
+allcourses$height <- ifelse(allcourses$height=="5'8\"", "172.72", allcourses$height)
+allcourses$height <- as.numeric(allcourses$height)
+
+allcourses$birthmonth <- ifelse(allcourses$birthmonth=="sept","sep",allcourses$birthmonth)
+allcourses %>% mutate(
+    birthmonth = fct_relevel(factor(birthmonth), tolower(month.abb))
+) -> allcourses
+
+library(sp)
+library(rworldmap)
+
+# The single argument to this function, points, is a data.frame in which:
+#   - column 1 contains the longitude in degrees
+#   - column 2 contains the latitude in degrees
+coords2country = function(points)
+{  
+  countriesSP <- getMap(resolution='low')
+  pointsSP = SpatialPoints(points, proj4string=CRS(proj4string(countriesSP)))  
+  indices = over(pointsSP, countriesSP)
+  indices$ADMIN  
+  #indices$ISO3 # returns the ISO3 code 
+  #indices$continent   # returns the continent (6 continent model)
+  #indices$REGION   # returns the continent (7 continent model)
+}
+allcourses$id <- 1:nrow(allcourses)
+coords2country(allcourses %>% select(lon,lat) %>% na.omit()) %>% droplevels() -> uu
+#uu <- ifelse(uu=="United Kingdom","UK","Elsewhere")
+uu <- cbind(in_uk=uu, allcourses %>% select(lon,lat,id) %>% na.omit() %>% select(id))
+allcourses <- left_join(allcourses, uu) 
+
+survdf <- allcourses %>% select(-uun, -lat,-lon,-missing,-threewords, -id) %>% rename(catdog = binary)
+
+write.csv(survdf,"surveydata_allcourse.csv", row.names=F)
+```
+
+# How many responses?
+
+Currently, across all stats courses, `r nrow(survdf)` people have responded to the survey. All questions were optional, so there are varying degrees of missingness.  
+
+# Where is everybody? 
+```{r echo=FALSE}
+library(ggmap)
+library(maptools)
+library(maps)
+survdfmap <- 
+  allcourses %>%
+  mutate(
+    lat = round(lat,1),
+    lon = round(lon,1)
+  ) %>% count(lat,lon,course)
+
+mp <- NULL
+source("~/Desktop/git_repos/jkr/R/uoepsy_cols.R")
+mapWorld <- borders("world", colour="grey50", fill="grey50") # create a layer of borders
+mp <- ggplot() +   mapWorld
+
+mp <- mp+ geom_point(data = survdfmap, aes(x=lon, y=lat, size=n, color = course)) +
+  theme_void() + facet_wrap(~course)+ scale_color_manual(values=uoepsy_colors)
+mp
+```
+
+# In what month are people born?
+```{r}
+survdf %>% 
+  ggplot(.,aes(x=birthmonth, fill=birthmonth)) +
+  geom_bar() +
+  scale_fill_viridis_d() + 
+  theme_classic() +
+  theme(legend.position = "none") +
+  labs(x="- Birth Month - ")
+
+  #ggsave(filename = "bmonth.png", last_plot())
+```
+
+# How tall are people?
+
+```{r}
+survdf %>% 
+  ggplot(.,aes(x=height,)) +
+  geom_dotplot(dotsize = .5) + 
+  theme_classic()
+
+#ggsave(filename = "heights.png", last_plot())
+```
+
+# What are your eye colours?  
+
+```{r}
+colvals <- c("amber"="#ffbf00","brown" = "#634e34", "blue" = "#2e536f", "green" = "#3d671d","grey"="#778899" ,"hazel" = "#8E7618", "other"="black")
+
+
+survdf %>% 
+  ggplot(.,aes(x=eyecolour, fill=eyecolour)) +
+  geom_bar() +
+  scale_fill_manual(values = colvals) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+
+#ggsave(filename = "eyecolours.png", last_plot())
+```
+
+# Dogs or cats?
+
+```{r}
+survdf %>% 
+  ggplot(.,aes(x=catdog, fill=catdog)) +
+  geom_bar() +
+  theme_classic()+
+  facet_wrap(~course)
+```
+
+# Three word descriptions
+
+```{r}
+require(tm)
+require(SnowballC)
+require(wordcloud)
+comms <- allcourses$threewords
+comcorp <- Corpus(VectorSource(comms))
+comcorp <-tm_map(comcorp,content_transformer(tolower))
+toSpace <- content_transformer(function(x, pattern) { return (gsub(pattern, " ", x))})
+comcorp <- tm_map(comcorp, toSpace, "'")
+comcorp <- tm_map(comcorp, toSpace, "’")
+comcorp <- tm_map(comcorp, toSpace, '"')
+comcorp <- tm_map(comcorp, removePunctuation)
+comcorp <- tm_map(comcorp, removeNumbers)
+comcorp <- tm_map(comcorp, removeWords, stopwords("english"))
+comcorp <- tm_map(comcorp, stripWhitespace)
+#comcorp <- tm_map(comcorp,stemDocument)
+myStopwords <- c("can", "say","one","way","use",
+                     "also","howev","tell","will",
+                     "much","need","take","tend","even",
+                     "like","particular","rather","said",
+                     "get","well","make","ask","come","end",
+                     "first","two","help","often","may",
+                     "might","see","someth","thing","point",
+                     "post","look","right","now","think","‘ve ",
+                     "‘re ","anoth","put","set","new","good",
+                     "want","sure","kind","larg","yes,","day","etc",
+                     "quit","sinc","attempt","lack","seen","awar",
+                     "littl","ever","moreov","though","found","abl",
+                     "enough","far","earli","away","achiev","draw",
+                     "last","never","brief","bit","entir","brief",
+                     "great","lot")
+comcorp <- tm_map(comcorp, removeWords, myStopwords)
+dtm <- DocumentTermMatrix(comcorp)
+#collapse matrix by summing over columns
+freq <- colSums(as.matrix(dtm))
+#length should be total number of terms
+#create sort order (descending)
+ord <- order(freq,decreasing=TRUE)
+#List all terms in decreasing order of freq and write to disk
+d <- data.frame(word = names(freq), freq=freq)
+suppressWarnings(suppressMessages(wordcloud(words = d$word, freq = d$freq, min.freq = 1,
+              max.words=200, random.order=FALSE, rot.per=0.35, 
+              colors=brewer.pal(8, "Dark2"))))
+
+
+```
+
+
+
+
+# PostGrad Extras
+
+## Feelings about stats & programming
+
+```{r}
+usmr %>% mutate(
+  stats = fct_recode(factor(stats),
+                     "terrified!" = "terrified",
+                     "OK, but don't ask me too often" = "ok",
+                     "I know enough to know that theres lots I don't know" = "know",
+                     "I got this!" = "gotthis",
+                     "I'll be teaching you!" = "teach",
+                     "Huh? What's statistics?" = "what"),
+  prog = fct_recode(factor(prog),
+                     "terrified!" = "terrified",
+                     "OK, but don't ask me too often" = "ok",
+                     "I know enough to know that theres lots I don't know" = "know",
+                     "I got this!" = "gotthis",
+                     "I'll be teaching you!" = "teach",
+                     "Huh? What's programming?" = "what"),
+) -> usmr
+
+library(patchwork)
+usmr %>% 
+  ggplot(.,aes(x=stats, fill=stats)) +
+  geom_bar() +
+  theme_classic() +
+  theme(axis.text.x = element_blank())+
+  scale_fill_manual("Feelings", values=RColorBrewer::brewer.pal(5, name="Dark2"))+
+  guides(fill=FALSE) +
+usmr %>% 
+  ggplot(.,aes(x=prog, fill=prog)) +
+  geom_bar() + 
+  theme_classic() +
+  theme(axis.text.x = element_blank())+
+  scale_fill_manual("Feelings", values=RColorBrewer::brewer.pal(6, name="Dark2"))
+
+#ggsave(filename = "prog.png", last_plot())
+```
+
+## Previously used:
+
+```{r}
+usmr %>% select(starts_with("software")) %>% 
+  summarise_all(~sum(!is.na(.))) %>% 
+  pivot_longer(1:8, names_to="software",values_to="n") %>%
+  mutate(
+    software = gsub("software","",software)
+  ) %>% 
+  ggplot(., aes(x = software, y = n, fill = software)) + 
+  geom_col() +
+  scale_fill_manual("Feelings", values=RColorBrewer::brewer.pal(8, name="Set1"))+
+  theme_classic() + 
+  theme(legend.position = "none") 
+
+#ggsave(filename = "software.png", last_plot())
+```
+
