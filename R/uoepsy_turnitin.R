@@ -40,7 +40,7 @@ uoepsy_turnitin<-function(submission_dir,output_file,seed=FALSE,rename_files=TRU
     mutate(
       filetype = substr(filename, start = regexpr("\\.", filename)+1, stop=nchar(filename)),
       exam_number = gsub(".*?(B\\d{6}).*", "\\1", filename),
-      turnitin_id = substr(filename, start = 1, stop=regexpr("-", filename)-1),
+      turnitin_id = substr(filename, start = 1, stop=regexpr("-", filename)-2),
       turnitin_link = paste0('=HYPERLINK("https://ev.turnitinuk.com/app/carta/en_us/?o=', turnitin_id,'","',turnitin_id,'")')
     ) -> submissions
 
