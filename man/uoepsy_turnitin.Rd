@@ -4,7 +4,12 @@
 \alias{uoepsy_turnitin}
 \title{make spreadsheet with turnitin links from set of files}
 \usage{
-uoepsy_turnitin(submission_dir, output_file, seed = FALSE, rename_files = TRUE)
+uoepsy_turnitin(
+  submission_dir,
+  output_file,
+  seed = FALSE,
+  rename_files = FALSE
+)
 }
 \arguments{
 \item{submission_dir}{directory holding all and only the submitted files}

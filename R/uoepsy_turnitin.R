@@ -6,7 +6,7 @@
 #' @export
 #' @examples
 #' uoepsy_turnitin("~/Desktop/dapr1reps/","~/Desktop/dapr_marks.csv")
-uoepsy_turnitin<-function(submission_dir,output_file,seed=FALSE,rename_files=TRUE){
+uoepsy_turnitin<-function(submission_dir,output_file,seed=FALSE,rename_files=FALSE){
   require(tidyverse)
 
   #read script
