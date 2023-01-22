@@ -12,8 +12,10 @@ pscale <- function(x,lgrade=FALSE){
     pgrade = c("H","G","F","E","E","D","D","D","C","C","C","B","B","B","A3","A3","A3","A2","A1","A1")
   )
   if(lgrade){
-    sapply(x, FUN = function(y) ps$pgrade[which.min(abs(ps$pscale-ifelse(y%%.5==0,y+.01,y)))], simplify = T)
+    g = lapply(x, FUN = function(y) ps$pgrade[which.min(abs(ps$pscale-ifelse(y%%.5==0,y+.01,y)))])
   } else {
-    sapply(x, FUN = function(y) ps$pscale[which.min(abs(ps$pscale-ifelse(y%%.5==0,y+.01,y)))], simplify = T)
+    g = lapply(x, FUN = function(y) ps$pscale[which.min(abs(ps$pscale-ifelse(y%%.5==0,y+.01,y)))])
   }
+  g[lengths(g) == 0] <- NA
+  unlist(g)
 }
