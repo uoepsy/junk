@@ -2,27 +2,21 @@
 % Please edit documentation in R/uoepsy_turnitin.R
 \name{uoepsy_turnitin}
 \alias{uoepsy_turnitin}
-\title{make spreadsheet with turnitin links from set of files}
+\title{Create a spreadsheet with turnitin links from a set of files.}
 \usage{
-uoepsy_turnitin(
-  submission_dir,
-  output_file,
-  seed = FALSE,
-  rename_files = FALSE
-)
+uoepsy_turnitin(submission_dir, output_file, rename_files = FALSE)
 }
 \arguments{
 \item{submission_dir}{directory holding all and only the submitted files}
 
 \item{output_file}{filepath to output csv}
 
-\item{seed}{search script for seed? (looks for x<-, based on dapr labtests)}
-
-\item{rename_files}{if TRUE will rename files to just exam numbers (where possible)}
+\item{rename_files}{if TRUE will rename files to just the exam numbers (where possible)}
 }
 \description{
-make spreadsheet with turnitin links from set of files
+Create a spreadsheet with turnitin links from a set of files.
 }
 \examples{
-uoepsy_turnitin("~/Desktop/dapr1reps/","~/Desktop/dapr_marks.csv")
+# from turnitin submission box, download all files, and unzip to a folder, e.g. dapr1reps/
+uoepsy_turnitin(submission_dir = "~/Desktop/dapr1reps/", output_file = "~/Desktop/dapr_marks.csv")
 }

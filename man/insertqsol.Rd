@@ -2,10 +2,11 @@
 % Please edit documentation in R/insertqsol.R
 \name{insertqsol}
 \alias{insertqsol}
-\title{Insert \%in\%.}
+\title{Insert question and solution.}
 \usage{
 insertqsol()
 }
 \description{
 Call this function as an addin to insert q and sol code at the cursor position.
+Can add as a keyboard shortcut (I use ctrl + shift + q)
 }

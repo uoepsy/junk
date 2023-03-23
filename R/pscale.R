@@ -1,4 +1,4 @@
-#' round to 20 point psychology marking scale.
+#' Quickly round to the 20 point psychology marking scale.
 #' will round to nearest point on scale. if mid-point, will round up.
 #' @param x numeric vector
 #' @param lgrade logical specifying whether letter grades are desired (default = FALSE)
