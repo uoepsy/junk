@@ -2,3 +2,8 @@ Name: Insert QSol
 Description: Inserts `qbegin/end and solbegin/send` at the cursor position.
 Binding: insertqsol
 Interactive: false
+
+Name: Insert Callout
+Description: Inserts callout at the cursor position.
+Binding: insertcallout
+Interactive: false
