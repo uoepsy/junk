@@ -4,10 +4,12 @@
 \alias{xaringan_nonote_render}
 \title{render xaringan slides without presenter notes}
 \usage{
-xaringan_nonote_render(fpath = NULL)
+xaringan_nonote_render(fpath = NULL, outdir = NULL)
 }
 \arguments{
 \item{fpath}{path to .Rmd file}
+
+\item{outdir}{directory to place rendered html}
 }
 \description{
 render xaringan slides without presenter notes
