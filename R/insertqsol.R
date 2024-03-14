@@ -4,7 +4,7 @@
 #' Can add as a keyboard shortcut (I use ctrl + shift + q)
 #' @export
 insertqsol <- function() {
-  rstudioapi::insertText("`r qbegin()`
+  rstudioapi::insertText("`r qbegin(qcounter())`
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`

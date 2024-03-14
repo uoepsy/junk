@@ -2,9 +2,11 @@
 
 export(count_words)
 export(insertcallout)
+export(insertlinkout)
 export(insertqsol)
 export(pscale)
 export(sim_basicrs)
+export(uoepsy_col)
 export(uoepsy_turnitin)
 export(xaringan_nonote_render)
 import(dplyr)

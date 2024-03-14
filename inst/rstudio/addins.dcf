@@ -7,3 +7,8 @@ Name: Insert Callout
 Description: Inserts callout at the cursor position.
 Binding: insertcallout
 Interactive: false
+
+Name: Insert Linkout
+Description: Inserts link with target blank at the cursor position.
+Binding: insertlinkout
+Interactive: false
