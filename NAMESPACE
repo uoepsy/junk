@@ -2,6 +2,7 @@
 
 export(count_words)
 export(insertcallout)
+export(insertcolumns)
 export(insertlinkout)
 export(insertqsol)
 export(pscale)

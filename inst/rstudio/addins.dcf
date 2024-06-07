@@ -12,3 +12,8 @@ Name: Insert Linkout
 Description: Inserts link with target blank at the cursor position.
 Binding: insertlinkout
 Interactive: false
+
+Name: Insert Columns
+Description: Inserts 2 column divs at the cursor position.
+Binding: insertcolumns
+Interactive: false
