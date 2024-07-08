@@ -20,7 +20,7 @@ course_table <- function(b1,b2,b1list,b2list,week){
   glue::glue('
   <table style="border: 1px solid black;>
     <tr style="padding: 0 1em 0 1em;">
-      <td rowspan="5" style="border: 1px solid black;padding: 0 1em 0 1em;opacity:{oplist[1]};text-align:center">
+      <td rowspan="5" style="border: 1px solid black;padding: 0 1em 0 1em;opacity:{oplist[1]};text-align:center;vertical-align: middle">
           {b1}</td>
       <td style="border: 1px solid black;padding: 0 1em 0 1em;opacity:{oplist[1]}">
           {leclist[1]}</td>
@@ -35,7 +35,7 @@ course_table <- function(b1,b2,b1list,b2list,week){
           {leclist[5]}</td></tr>
 
     <tr style="padding: 0 1em 0 1em;">
-      <td rowspan="5" style="border: 1px solid black;padding: 0 1em 0 1em;opacity:{oplist[6]};text-align:center">
+      <td rowspan="5" style="border: 1px solid black;padding: 0 1em 0 1em;opacity:{oplist[6]};text-align:center;vertical-align: middle">
           {b2}</td>
       <td style="border: 1px solid black;padding: 0 1em 0 1em;opacity:{oplist[6]}">
           {leclist[6]}</td>
