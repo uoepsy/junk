@@ -53,6 +53,6 @@ course_table <- function(b1,b2,b1list,b2list,week){
   b1=paste0("<b>",b1,"</b>"),
   b2=paste0("<b>",b2,"</b>"),
   leclist=leclist,
-  oplist=c(rep(1,week),rep(0.4,10-week))
+  oplist=c(rep(1,pmin(10,week)),rep(0.4,pmax(10-week,0)))
   ) |> cat()
 }
