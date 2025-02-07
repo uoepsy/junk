@@ -4,7 +4,16 @@
 \alias{sim_basicrs}
 \title{Quickly sim data for a basic model y~1+x+(1+x|g)}
 \usage{
-sim_basicrs(seed = NULL, b0 = 0, b1 = 1, z0 = 1, z1 = 1, e = 1)
+sim_basicrs(
+  seed = NULL,
+  b0 = 0,
+  b1 = 1,
+  z0 = 1,
+  z1 = 1,
+  zz = 0,
+  e = 1,
+  eq = TRUE
+)
 }
 \arguments{
 \item{seed}{random seed to use}
@@ -13,11 +22,15 @@ sim_basicrs(seed = NULL, b0 = 0, b1 = 1, z0 = 1, z1 = 1, e = 1)
 
 \item{b1}{fixed slope}
 
-\item{z0}{random intercept sd}
+\item{z0}{random intercept va}
 
-\item{z1}{random slope sd}
+\item{z1}{random slope var}
+
+\item{zz}{int-slope covar}
 
 \item{e}{residual var}
+
+\item{eq}{equality of x between groups}
 }
 \description{
 Quickly sim data for a basic model y~1+x+(1+x|g)
